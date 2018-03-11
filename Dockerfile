@@ -24,12 +24,16 @@ RUN cd /opt \
 RUN cd /opt \
  && git clone https://github.com/OpenZwave/open-zwave-control-panel open-zwave-control-panel \
  && cd open-zwave-control-panel \
+ && sed -i 's/#LIBUSB := -ludev/LIBUSB := -ludev/' Makefile \
+ && sed -i 's/#LIBS := $(LIBZWAVE) $(GNUTLS) $(LIBMICROHTTPD) -pthread $(LIBUSB) -lresolv/LIBS := $(LIBZWAVE) $(GNUTLS) $(LIBMICROHTTPD) -pthread $(LIBUSB) -lresolv/' Makefile \
+ && sed -i 's/LIBS := $(LIBZWAVE) $(GNUTLS) $(LIBMICROHTTPD) -pthread $(LIBUSB) $(ARCH) -lresolv/#LIBS := $(LIBZWAVE) $(GNUTLS) $(LIBMICROHTTPD) -pthread $(LIBUSB) $(ARCH) -lresolv/' Makefile \   
  && ln -sd ../open-zwave/config \
  && make
  # && mv /tmp/Makefile.PATCHED Makefile \
 
-# remove several traces of debian python
-RUN apt-get purge build-essential libudev-dev libmicrohttpd-dev libgnutls28-dev
+# Cleanup (once we switch to one bit command)
+# RUN apt-get purge build-essential libudev-dev libmicrohttpd-dev libgnutls28-dev
 
 RUN [ "cross-build-end" ]
 
+ENTRYPOINT ["/opt/open-zwave-control-panel/ozwcp"]
